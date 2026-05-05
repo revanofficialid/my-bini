@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aplikasi Penghitung</title>
+    <style>
+        /* Gaya CSS agar tampilannya seperti Aplikasi Asli */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Memenuhi layar */
+            margin: 0;
+            background-color: #f0f4f8;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            width: 85%;
+            max-width: 320px;
+        }
+        h1 { 
+            color: #1e293b; 
+            font-size: 22px; 
+            margin-bottom: 5px; 
+        }
+        p.subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 0;
+        }
+        #counter { 
+            font-size: 72px; 
+            font-weight: bold; 
+            color: #22c55e; 
+            margin: 20px 0; 
+        }
+        .btn-group { 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center; 
+            margin-bottom: 20px;
+        }
+        button {
+            border: none; 
+            border-radius: 12px;
+            cursor: pointer; 
+            color: white; 
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
+        button:active { 
+            transform: scale(0.92); /* Efek ditekan */
+        }
+        .btn-minus { 
+            background-color: #ef4444; 
+            padding: 15px 25px; 
+            font-size: 24px;
+        }
+        .btn-plus { 
+            background-color: #3b82f6; 
+            padding: 15px 35px; 
+            font-size: 24px;
+        }
+        .btn-reset { 
+            background-color: #cbd5e1; 
+            color: #475569;
+            width: 100%; 
+            padding: 15px; 
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Alat Hitung</h1>
+        <p class="subtitle">Ketuk untuk menambah</p>
+        
+        <div id="counter">0</div>
+        
+        <div class="btn-group">
+            <button class="btn-minus" onclick="ubah(-1)">-</button>
+            <button class="btn-plus" onclick="ubah(1)">+</button>
+        </div>
+        
+        <button class="btn-reset" onclick="reset()">Ulangi (Reset)</button>
+    </div>
+
+    <script>
+        // Logika Javascript untuk menghitung
+        let angka = 0;
+        const teksAngka = document.getElementById('counter');
+
+        function ubah(nilai) {
+            angka += nilai;
+            // Mencegah angka menjadi minus
+            if(angka < 0) angka = 0; 
+            teksAngka.innerText = angka;
+        }
+
+        function reset() {
+            angka = 0;
+            teksAngka.innerText = angka;
+        }
+    </script>
+
+</body>
+</html>
