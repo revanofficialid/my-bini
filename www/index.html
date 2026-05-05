@@ -3,2310 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APK Builder Pro</title>
+<title>Finance Tracker PRO</title>
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
-
-  :root {
-    --bg-0: #080b10;
-    --bg-1: #0d1117;
-    --bg-2: #161b22;
-    --bg-3: #1c2333;
-    --bg-4: #21262d;
-    --border: #30363d;
-    --border-bright: #3d4450;
-    --text-0: #e6edf3;
-    --text-1: #8b949e;
-    --text-2: #6e7681;
-    --accent: #00d4aa;
-    --accent-dim: #00d4aa22;
-    --accent-2: #79c0ff;
-    --accent-3: #f78166;
-    --accent-4: #ffa657;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --red: #da3633;
-    --purple: #8957e5;
-    --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
-    --font-sans: 'Syne', 'Segoe UI', sans-serif;
-    --radius: 8px;
-    --radius-lg: 12px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.4);
-    --glow: 0 0 20px rgba(0,212,170,0.15);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg-0);
-    color: var(--text-0);
-    font-family: var(--font-sans);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* GRID BACKGROUND */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
-    background-size: 32px 32px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* HEADER */
-  .header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(8,11,16,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
-
-  .logo-icon {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    box-shadow: var(--glow);
-  }
-
-  .logo-text span { color: var(--accent); }
-
-  .header-badge {
-    background: var(--accent-dim);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    padding: 2px 8px;
-    border-radius: 20px;
-    letter-spacing: 1px;
-  }
-
-  /* MAIN LAYOUT */
-  .app-container {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px 16px;
-  }
-
-  /* TABS */
-  .tabs {
-    display: flex;
-    gap: 2px;
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 4px;
-    margin-bottom: 24px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-
-  .tab-btn {
-    flex: 1;
-    min-width: 80px;
-    background: transparent;
-    border: none;
-    color: var(--text-1);
-    font-family: var(--font-sans);
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 8px 12px;
-    border-radius: 7px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    white-space: nowrap;
-    letter-spacing: 0.3px;
-  }
-
-  .tab-btn:hover { color: var(--text-0); background: var(--bg-3); }
-
-  .tab-btn.active {
-    background: var(--bg-4);
-    color: var(--accent);
-    box-shadow: 0 0 0 1px var(--border-bright), inset 0 1px 0 rgba(255,255,255,0.05);
-  }
-
-  .tab-icon { font-size: 0.9rem; }
-
-  /* PANELS */
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  /* GRID LAYOUT */
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  @media (max-width: 768px) {
-    .grid-2 { grid-template-columns: 1fr; }
-  }
-
-  /* CARD */
-  .card {
-    background: var(--bg-1);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,212,170,0.3), transparent);
-  }
-
-  .card-title {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-1);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .card-title::before {
-    content: '';
-    width: 3px;
-    height: 12px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
-
-  /* FORM ELEMENTS */
-  .form-group {
-    margin-bottom: 14px;
-  }
-
-  label {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-1);
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-    font-family: var(--font-mono);
-  }
-
-  input[type="text"],
-  input[type="password"],
-  input[type="number"],
-  textarea,
-  select {
-    width: 100%;
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text-0);
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    padding: 10px 12px;
-    outline: none;
-    transition: all 0.2s;
-    appearance: none;
-  }
-
-  input:focus, textarea:focus, select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(0,212,170,0.1);
-    background: var(--bg-3);
-  }
-
-  input::placeholder, textarea::placeholder { color: var(--text-2); }
-
-  textarea {
-    resize: vertical;
-    min-height: 300px;
-    line-height: 1.6;
-  }
-
-  /* BUTTONS */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border: none;
-    border-radius: var(--radius);
-    font-family: var(--font-sans);
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #000;
-    box-shadow: 0 0 20px rgba(0,212,170,0.3);
-  }
-
-  .btn-primary:hover {
-    background: #00ebb9;
-    box-shadow: 0 0 30px rgba(0,212,170,0.5);
-    transform: translateY(-1px);
-  }
-
-  .btn-primary:active { transform: translateY(0); }
-
-  .btn-secondary {
-    background: var(--bg-3);
-    color: var(--text-0);
-    border: 1px solid var(--border);
-  }
-
-  .btn-secondary:hover {
-    background: var(--bg-4);
-    border-color: var(--border-bright);
-  }
-
-  .btn-danger {
-    background: rgba(218,54,51,0.15);
-    color: var(--accent-3);
-    border: 1px solid rgba(218,54,51,0.3);
-  }
-
-  .btn-danger:hover {
-    background: rgba(218,54,51,0.25);
-    border-color: var(--accent-3);
-  }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-  }
-
-  .btn-outline:hover {
-    background: var(--accent-dim);
-    box-shadow: var(--glow);
-  }
-
-  .btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
-  }
-
-  .btn-sm { padding: 6px 12px; font-size: 0.75rem; }
-
-  .btn-full { width: 100%; }
-
-  /* CODE EDITOR */
-  .editor-wrapper {
-    position: relative;
-  }
-
-  .editor-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    border-radius: var(--radius) var(--radius) 0 0;
-    padding: 8px 12px;
-  }
-
-  .editor-toolbar-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-red { background: #ff5f56; }
-  .dot-yellow { background: #ffbd2e; }
-  .dot-green { background: #27c93f; }
-
-  .file-name {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-1);
-    padding: 2px 8px;
-    background: var(--bg-2);
-    border-radius: 4px;
-    border: 1px solid var(--border);
-  }
-
-  .editor-area {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    line-height: 1.7;
-    border-radius: 0 0 var(--radius) var(--radius) !important;
-    border-top: none !important;
-  }
-
-  /* FILE UPLOAD ZONE */
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius-lg);
-    padding: 32px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: var(--bg-2);
-    position: relative;
-  }
-
-  .upload-zone:hover, .upload-zone.dragover {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    box-shadow: var(--glow);
-  }
-
-  .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .upload-icon { font-size: 2rem; margin-bottom: 8px; }
-  .upload-text { font-size: 0.85rem; color: var(--text-1); }
-  .upload-sub { font-size: 0.72rem; color: var(--text-2); margin-top: 4px; font-family: var(--font-mono); }
-
-  /* ICON PREVIEW */
-  .icon-preview {
-    width: 72px;
-    height: 72px;
-    border-radius: 16px;
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    font-size: 2rem;
-    flex-shrink: 0;
-  }
-
-  .icon-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 15px;
-  }
-
-  .icon-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-  }
-
-  .icon-fields { flex: 1; }
-
-  /* BUILD BUTTON AREA */
-  .build-area {
-    background: linear-gradient(135deg, rgba(0,212,170,0.05), rgba(121,192,255,0.05));
-    border: 1px solid var(--accent);
-    border-radius: var(--radius-lg);
-    padding: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-    box-shadow: var(--glow);
-  }
-
-  .build-title {
-    font-size: 1.1rem;
-    font-weight: 800;
-    margin-bottom: 6px;
-    letter-spacing: -0.3px;
-  }
-
-  .build-sub {
-    font-size: 0.78rem;
-    color: var(--text-1);
-    margin-bottom: 18px;
-    font-family: var(--font-mono);
-  }
-
-  .build-btn-wrap { display: flex; gap: 10px; justify-content: center; }
-
-  /* TERMINAL */
-  .terminal {
-    background: #0a0d12;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-
-  .terminal-header {
-    background: var(--bg-3);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .terminal-title {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-1);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .terminal-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: blink 1.5s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .terminal-body {
-    padding: 16px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    line-height: 1.7;
-    min-height: 200px;
-    max-height: 320px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-
-  .terminal-body::-webkit-scrollbar { width: 4px; }
-  .terminal-body::-webkit-scrollbar-track { background: transparent; }
-  .terminal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .log-line { display: flex; gap: 10px; margin-bottom: 2px; align-items: flex-start; }
-  .log-time { color: var(--text-2); flex-shrink: 0; }
-  .log-text { color: var(--text-0); word-break: break-all; }
-  .log-info .log-text { color: var(--accent-2); }
-  .log-success .log-text { color: var(--green); }
-  .log-warn .log-text { color: var(--yellow); }
-  .log-error .log-text { color: var(--accent-3); }
-  .log-accent .log-text { color: var(--accent); }
-  .log-dim .log-text { color: var(--text-2); }
-
-  .log-prefix {
-    flex-shrink: 0;
-  }
-
-  /* STATUS BADGES */
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    padding: 3px 9px;
-    border-radius: 20px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  .status-idle { background: rgba(110,118,129,0.2); color: var(--text-2); border: 1px solid var(--border); }
-  .status-queued { background: rgba(210,153,34,0.15); color: var(--yellow); border: 1px solid rgba(210,153,34,0.3); }
-  .status-running { background: rgba(0,212,170,0.1); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
-  .status-success { background: rgba(63,185,80,0.1); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
-  .status-failed { background: rgba(218,54,51,0.1); color: var(--red); border: 1px solid rgba(218,54,51,0.3); }
-
-  .pulse { animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
-  /* PROGRESS BAR */
-  .progress-wrap {
-    background: var(--bg-3);
-    border-radius: 4px;
-    height: 4px;
-    overflow: hidden;
-    margin: 12px 0;
-  }
-
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    border-radius: 4px;
-    transition: width 0.5s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .progress-bar::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: shimmer 1.5s linear infinite;
-  }
-
-  @keyframes shimmer { to { left: 100%; } }
-
-  /* PHONE MOCKUP */
-  .phone-mockup-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-  }
-
-  .phone-mockup {
-    width: 280px;
-    background: #0d0d0d;
-    border-radius: 40px;
-    border: 3px solid #2a2a2a;
-    box-shadow: 0 0 0 1px #111, 0 30px 80px rgba(0,0,0,0.8), inset 0 0 0 1px #333;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .phone-notch {
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 28px;
-    background: #0d0d0d;
-    border-radius: 0 0 20px 20px;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .phone-camera {
-    width: 10px; height: 10px;
-    background: #1a1a1a;
-    border-radius: 50%;
-    border: 1px solid #222;
-  }
-
-  .phone-speaker {
-    width: 40px; height: 4px;
-    background: #1a1a1a;
-    border-radius: 2px;
-  }
-
-  .phone-screen {
-    width: 100%;
-    height: 540px;
-    border-radius: 38px;
-    overflow: hidden;
-    padding-top: 28px;
-    background: #fff;
-  }
-
-  .phone-screen iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
-
-  .phone-home-bar {
-    position: absolute;
-    bottom: 10px; left: 50%;
-    transform: translateX(-50%);
-    width: 80px; height: 4px;
-    background: #333;
-    border-radius: 2px;
-  }
-
-  .preview-placeholder {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-2);
-    color: var(--text-2);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    gap: 8px;
-  }
-
-  .preview-placeholder-icon { font-size: 2.5rem; }
-
-  /* SETTINGS */
-  .setting-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .setting-row:last-child { border-bottom: none; }
-
-  .setting-info { flex: 1; }
-  .setting-label { font-size: 0.85rem; font-weight: 600; }
-  .setting-desc { font-size: 0.72rem; color: var(--text-2); margin-top: 2px; font-family: var(--font-mono); }
-
-  /* TOGGLE */
-  .toggle {
-    position: relative;
-    width: 40px;
-    height: 22px;
-    flex-shrink: 0;
-  }
-
-  .toggle input { opacity: 0; width: 0; height: 0; }
-
-  .toggle-track {
-    position: absolute;
-    inset: 0;
-    background: var(--bg-4);
-    border-radius: 11px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .toggle-track::after {
-    content: '';
-    position: absolute;
-    left: 3px; top: 3px;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--text-2);
-    transition: all 0.3s;
-  }
-
-  .toggle input:checked + .toggle-track {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-  }
-
-  .toggle input:checked + .toggle-track::after {
-    left: 21px;
-    background: var(--accent);
-  }
-
-  /* TOAST */
-  #toast-container {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 340px;
-  }
-
-  .toast {
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 12px 16px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 0.82rem;
-    box-shadow: var(--shadow);
-    animation: slideIn 0.3s cubic-bezier(.16,1,.3,1);
-    transform-origin: bottom right;
-    border-left-width: 3px;
-    max-width: 100%;
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(20px) scale(0.9); }
-    to { opacity: 1; transform: translateX(0) scale(1); }
-  }
-
-  @keyframes slideOut {
-    to { opacity: 0; transform: translateX(20px) scale(0.9); }
-  }
-
-  .toast.removing { animation: slideOut 0.25s cubic-bezier(.16,1,.3,1) forwards; }
-
-  .toast-success { border-left-color: var(--green); }
-  .toast-error { border-left-color: var(--red); }
-  .toast-info { border-left-color: var(--accent-2); }
-  .toast-warn { border-left-color: var(--yellow); }
-
-  .toast-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-  .toast-body { flex: 1; }
-  .toast-title { font-weight: 700; color: var(--text-0); margin-bottom: 2px; }
-  .toast-msg { color: var(--text-1); font-size: 0.75rem; font-family: var(--font-mono); }
-
-  /* ARTIFACT/DOWNLOAD CARD */
-  .artifact-card {
-    background: linear-gradient(135deg, rgba(63,185,80,0.05), rgba(0,212,170,0.05));
-    border: 1px solid rgba(63,185,80,0.3);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .artifact-icon {
-    width: 48px; height: 48px;
-    background: rgba(63,185,80,0.15);
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-
-  .artifact-name { font-weight: 700; font-size: 0.9rem; }
-  .artifact-meta { font-size: 0.72rem; color: var(--text-1); font-family: var(--font-mono); }
-
-  /* INFO ROW */
-  .info-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: var(--bg-2);
-    border-radius: var(--radius);
-    margin-bottom: 8px;
-    font-size: 0.78rem;
-  }
-
-  .info-key { color: var(--text-1); font-family: var(--font-mono); }
-  .info-val { color: var(--text-0); font-weight: 600; }
-
-  /* STEP INDICATOR */
-  .steps {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    margin-bottom: 24px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .steps::-webkit-scrollbar { display: none; }
-
-  .step {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .step-dot {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--bg-3);
-    border: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--text-2);
-    font-family: var(--font-mono);
-    transition: all 0.3s;
-  }
-
-  .step.done .step-dot { background: var(--green); border-color: var(--green); color: #000; }
-  .step.active .step-dot {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #000;
-    box-shadow: 0 0 12px rgba(0,212,170,0.4);
-    animation: pulse 1.5s ease-in-out infinite;
-  }
-
-  .step-label {
-    font-size: 0.65rem;
-    color: var(--text-2);
-    margin: 4px 0 0;
-    white-space: nowrap;
-    font-family: var(--font-mono);
-  }
-
-  .step.done .step-label, .step.active .step-label { color: var(--text-0); }
-
-  .step-connector {
-    flex: 1;
-    min-width: 24px;
-    height: 2px;
-    background: var(--border);
-    transition: background 0.3s;
-  }
-
-  .step.done + .step-connector { background: var(--green); }
-
-  .step-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 480px) {
-    .header { padding: 0 12px; }
-    .app-container { padding: 16px 12px; }
-    .card { padding: 16px; }
-    #toast-container { bottom: 16px; right: 12px; left: 12px; max-width: none; }
-    .phone-mockup { width: 240px; }
-    .phone-screen { height: 460px; }
-  }
-
-  /* SECTION DIVIDER */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 16px 0;
-  }
-
-  /* COPY BUTTON */
-  .copy-btn {
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text-1);
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    cursor: pointer;
-    font-family: var(--font-mono);
-    transition: all 0.2s;
-  }
-
-  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+body{background:#0a0a14;color:#fff;padding:12px;}
+
+h1{text-align:center;color:#c084ff;margin-bottom:10px;}
+
+.card{
+  background:#151528;
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:12px;
+}
+
+input,select{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border:none;
+  border-radius:10px;
+  background:#0f0f1f;
+  color:#fff;
+}
+
+button{
+  width:100%;
+  padding:11px;
+  margin-top:8px;
+  border:none;
+  border-radius:10px;
+  background:#a855f7;
+  color:white;
+  font-weight:bold;
+}
+
+button:active{transform:scale(0.96);}
+
+.balance{text-align:center;font-size:20px;margin-bottom:5px;}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  background:#0f0f1f;
+  padding:10px;
+  border-radius:10px;
+  margin-top:6px;
+}
+
+.income{color:#4ade80;}
+.expense{color:#fb7185;}
+
+.row{display:flex;gap:6px;}
+.row button{flex:1;}
+
+canvas{
+  width:100%;
+  background:#0f0f1f;
+  border-radius:10px;
+  margin-top:10px;
+}
 </style>
+
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="logo">
-    <div class="logo-icon">🤖</div>
-    <div class="logo-text">APK Builder <span>Pro</span></div>
+<h1>💎 Finance PRO</h1>
+
+<div class="card">
+  <select id="account"></select>
+  <div class="row">
+    <button onclick="addAccount()">+ Akun</button>
+    <button onclick="deleteAccount()">Hapus</button>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <span class="status-badge status-idle" id="global-status">
-      <span>●</span> IDLE
-    </span>
-    <span class="header-badge">v2.0</span>
-  </div>
-</header>
-
-<!-- TOAST CONTAINER -->
-<div id="toast-container"></div>
-
-<!-- MAIN APP -->
-<div class="app-container">
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('editor')" data-tab="editor">
-      <span class="tab-icon">📝</span> Editor
-    </button>
-    <button class="tab-btn" onclick="switchTab('preview')" data-tab="preview">
-      <span class="tab-icon">📱</span> Preview
-    </button>
-    <button class="tab-btn" onclick="switchTab('build')" data-tab="build">
-      <span class="tab-icon">🔨</span> Build
-    </button>
-    <button class="tab-btn" onclick="switchTab('settings')" data-tab="settings">
-      <span class="tab-icon">⚙️</span> Settings
-    </button>
-  </div>
-
-  <!-- ======================== EDITOR PANEL ======================== -->
-  <div class="panel active" id="panel-editor">
-    <div class="grid-2">
-      <!-- HTML EDITOR -->
-      <div>
-        <div class="card-title">Source HTML</div>
-        <div class="editor-wrapper">
-          <div class="editor-toolbar">
-            <div class="editor-toolbar-left">
-              <div class="dot dot-red"></div>
-              <div class="dot dot-yellow"></div>
-              <div class="dot dot-green"></div>
-              <span class="file-name">index.html</span>
-            </div>
-            <div style="display:flex;gap:6px">
-              <button class="copy-btn" onclick="copyCode()">Copy</button>
-              <button class="copy-btn" onclick="loadSampleHTML()">Sample</button>
-            </div>
-          </div>
-          <textarea class="editor-area" id="html-editor" spellcheck="false" placeholder="Ketik atau paste kode HTML Anda di sini...
-&#60;!DOCTYPE html&#62;
-&#60;html&#62;
-  &#60;body&#62;
-    &#60;h1&#62;Hello World!&#60;/h1&#62;
-  &#60;/body&#62;
-&#60;/html&#62;"></textarea>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <label style="flex:1;margin:0" class="upload-zone" style="padding:12px">
-            <input type="file" accept=".html,.htm" onchange="loadHTMLFile(event)">
-            <div style="display:flex;align-items:center;gap:6px;justify-content:center">
-              <span>📂</span>
-              <span style="font-size:0.78rem;color:var(--text-1);font-family:var(--font-mono)">Upload .html file</span>
-            </div>
-          </label>
-          <button class="btn btn-outline" onclick="switchTab('preview');updatePreview()">
-            <span>👁</span> Preview
-          </button>
-        </div>
-      </div>
-
-      <!-- APP CONFIG -->
-      <div>
-        <div class="card-title">App Configuration</div>
-        <div class="card">
-          <div class="icon-row">
-            <div>
-              <div class="icon-preview" id="icon-preview-box">🤖</div>
-              <div style="margin-top:6px">
-                <label class="btn btn-secondary btn-sm" style="cursor:pointer;display:block;text-align:center">
-                  <input type="file" accept="image/png,image/jpeg,image/webp" onchange="loadIcon(event)" style="display:none">
-                  📷 Icon
-                </label>
-              </div>
-            </div>
-            <div class="icon-fields">
-              <div class="form-group">
-                <label>App Name</label>
-                <input type="text" id="app-name" value="MyApp" placeholder="Nama Aplikasi">
-              </div>
-              <div class="form-group">
-                <label>Package Name</label>
-                <input type="text" id="pkg-name" value="com.mycompany.myapp" placeholder="com.xxx.yyy">
-              </div>
-            </div>
-          </div>
-          <div class="divider"></div>
-          <div class="form-group">
-            <label>App Version</label>
-            <input type="text" id="app-version" value="1.0.0" placeholder="1.0.0">
-          </div>
-          <div class="form-group">
-            <label>Version Code</label>
-            <input type="number" id="version-code" value="1" min="1">
-          </div>
-          <div class="form-group">
-            <label>Target SDK</label>
-            <select id="target-sdk">
-              <option value="33" selected>API 33 (Android 13)</option>
-              <option value="32">API 32 (Android 12L)</option>
-              <option value="31">API 31 (Android 12)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Orientation</label>
-            <select id="orientation">
-              <option value="portrait" selected>Portrait</option>
-              <option value="landscape">Landscape</option>
-              <option value="default">Auto</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================== PREVIEW PANEL ======================== -->
-  <div class="panel" id="panel-preview">
-    <div class="grid-2" style="align-items:start">
-      <div>
-        <div class="card-title">Phone Preview</div>
-        <div class="phone-mockup-wrap">
-          <div class="phone-mockup">
-            <div class="phone-notch">
-              <div class="phone-speaker"></div>
-              <div class="phone-camera"></div>
-            </div>
-            <div class="phone-screen" id="phone-screen-inner">
-              <div class="preview-placeholder">
-                <div class="preview-placeholder-icon">📱</div>
-                <div>Belum ada konten</div>
-                <div style="font-size:0.65rem;margin-top:4px">Ketik HTML di Editor lalu tekan Preview</div>
-              </div>
-            </div>
-            <div class="phone-home-bar"></div>
-          </div>
-        </div>
-        <div style="text-align:center;margin-top:12px">
-          <button class="btn btn-outline btn-sm" onclick="updatePreview()">🔄 Refresh Preview</button>
-        </div>
-      </div>
-
-      <div>
-        <div class="card-title">App Info</div>
-        <div class="card" id="preview-app-info">
-          <div class="info-row">
-            <span class="info-key">app_name</span>
-            <span class="info-val" id="pi-name">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">package</span>
-            <span class="info-val" id="pi-pkg">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">version</span>
-            <span class="info-val" id="pi-ver">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">target_sdk</span>
-            <span class="info-val" id="pi-sdk">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">orientation</span>
-            <span class="info-val" id="pi-ori">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">html_size</span>
-            <span class="info-val" id="pi-size">—</span>
-          </div>
-        </div>
-
-        <div class="card-title" style="margin-top:20px">HTML Stats</div>
-        <div class="card" id="html-stats">
-          <div class="info-row">
-            <span class="info-key">lines</span>
-            <span class="info-val" id="st-lines">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">characters</span>
-            <span class="info-val" id="st-chars">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">has_script</span>
-            <span class="info-val" id="st-js">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">has_style</span>
-            <span class="info-val" id="st-css">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================== BUILD PANEL ======================== -->
-  <div class="panel" id="panel-build">
-    <!-- STEPS -->
-    <div class="steps" id="build-steps">
-      <div class="step-wrap">
-        <div class="step" id="step-0"><div class="step-dot">1</div></div>
-        <div class="step-label">Validate</div>
-      </div>
-      <div class="step-connector" id="conn-0"></div>
-      <div class="step-wrap">
-        <div class="step" id="step-1"><div class="step-dot">2</div></div>
-        <div class="step-label">Push Files</div>
-      </div>
-      <div class="step-connector" id="conn-1"></div>
-      <div class="step-wrap">
-        <div class="step" id="step-2"><div class="step-dot">3</div></div>
-        <div class="step-label">Trigger Build</div>
-      </div>
-      <div class="step-connector" id="conn-2"></div>
-      <div class="step-wrap">
-        <div class="step" id="step-3"><div class="step-dot">4</div></div>
-        <div class="step-label">Monitoring</div>
-      </div>
-      <div class="step-connector" id="conn-3"></div>
-      <div class="step-wrap">
-        <div class="step" id="step-4"><div class="step-dot">5</div></div>
-        <div class="step-label">Done</div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <!-- LEFT: BUILD CONTROLS -->
-      <div>
-        <!-- GITHUB CONFIG -->
-        <div class="card-title">GitHub Configuration</div>
-        <div class="card" style="margin-bottom:16px">
-          <div class="form-group">
-            <label>GitHub Username</label>
-            <input type="text" id="gh-user" placeholder="octocat">
-          </div>
-          <div class="form-group">
-            <label>Personal Access Token</label>
-            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label>Repository Name</label>
-            <div style="display:flex;gap:8px">
-              <input type="text" id="gh-repo" placeholder="my-apk-builder" style="flex:1">
-              <button class="btn btn-secondary btn-sm" onclick="checkRepo()" id="btn-check-repo">Check</button>
-            </div>
-          </div>
-          <div id="repo-status" style="margin-top:8px;font-size:0.72rem;font-family:var(--font-mono);color:var(--text-2)"></div>
-        </div>
-
-        <!-- BUILD ACTION -->
-        <div class="build-area">
-          <div class="build-title">🚀 Start Build</div>
-          <div class="build-sub" id="build-summary">Configure settings → click Build APK</div>
-          <div class="progress-wrap" id="progress-wrap" style="display:none">
-            <div class="progress-bar" id="progress-bar" style="width:0%"></div>
-          </div>
-          <div class="build-btn-wrap">
-            <button class="btn btn-primary" id="btn-build" onclick="startBuild()">
-              <span>🔨</span> Build APK
-            </button>
-            <button class="btn btn-secondary" id="btn-cancel" onclick="cancelBuild()" style="display:none">
-              <span>✕</span> Cancel
-            </button>
-          </div>
-        </div>
-
-        <div style="background:rgba(121,192,255,0.06);border:1px solid rgba(121,192,255,0.2);border-radius:var(--radius);padding:12px;margin-bottom:16px;font-size:0.72rem;font-family:var(--font-mono);color:var(--text-1);line-height:1.7">
-          <div style="color:var(--accent-2);font-weight:700;margin-bottom:6px">ℹ Alur Build</div>
-          <div>1. Workflow dipush ke repo (GitHub mengindeks ~8 detik)</div>
-          <div>2. HTML dipush → memicu push trigger</div>
-          <div>3. Workflow dispatch dikirim sebagai fallback</div>
-          <div>4. Run dideteksi & dipantau otomatis</div>
-          <div style="margin-top:6px;color:var(--yellow)">⚠ Build pertama repo baru ~5–10 menit</div>
-        </div>
-
-        <!-- ARTIFACT OUTPUT -->
-        <div id="artifact-section" style="display:none">
-          <div class="card-title">Build Artifact</div>
-          <div class="artifact-card">
-            <div class="artifact-icon">📦</div>
-            <div style="flex:1">
-              <div class="artifact-name" id="artifact-name">app-release-Signed.apk</div>
-              <div class="artifact-meta" id="artifact-meta">GitHub Actions Artifact</div>
-            </div>
-            <a href="#" id="artifact-link" target="_blank" class="btn btn-outline btn-sm">
-              ⬇ Download
-            </a>
-          </div>
-          <div style="margin-top:10px;font-size:0.72rem;color:var(--text-2);font-family:var(--font-mono);text-align:center">
-            💡 Artifact tersedia di halaman Actions repository GitHub Anda
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: TERMINAL -->
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="card-title" style="margin:0">Build Terminal</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="status-badge status-idle" id="build-status-badge">● IDLE</span>
-            <button class="btn btn-secondary btn-sm" onclick="clearTerminal()">Clear</button>
-          </div>
-        </div>
-        <div class="terminal">
-          <div class="terminal-header">
-            <div class="terminal-title">
-              <div class="terminal-dot" id="term-dot" style="background:var(--text-2)"></div>
-              APK Builder Terminal
-            </div>
-            <span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-2)" id="term-run-id"></span>
-          </div>
-          <div class="terminal-body" id="terminal">
-            <div class="log-line log-dim">
-              <span class="log-time">--:--:--</span>
-              <span class="log-prefix" style="color:var(--accent)">$</span>
-              <span class="log-text">APK Builder Pro ready. Masukkan konfigurasi dan klik Build APK.</span>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="card-title">Workflow Preview</div>
-          <div class="terminal" style="max-height:180px">
-            <div class="terminal-header">
-              <div class="terminal-title">
-                <span>.github/workflows/build.yml</span>
-              </div>
-              <button class="copy-btn" onclick="copyWorkflow()">Copy</button>
-            </div>
-            <div class="terminal-body" id="workflow-preview" style="min-height:80px;max-height:160px;font-size:0.68rem">
-              <span style="color:var(--text-2)">Workflow akan muncul sebelum build dimulai...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================== SETTINGS PANEL ======================== -->
-  <div class="panel" id="panel-settings">
-    <div class="grid-2">
-      <div>
-        <div class="card-title">Build Settings</div>
-        <div class="card">
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Auto-Sign APK</div>
-              <div class="setting-desc">Generate temporary keystore otomatis</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="opt-sign" checked>
-              <div class="toggle-track"></div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Zipalign</div>
-              <div class="setting-desc">Optimize APK alignment untuk instalasi lebih cepat</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="opt-zip" checked>
-              <div class="toggle-track"></div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Minify HTML</div>
-              <div class="setting-desc">Kompres HTML sebelum dikemas</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="opt-min">
-              <div class="toggle-track"></div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Debug Logging</div>
-              <div class="setting-desc">Tampilkan log verbose di terminal</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="opt-debug">
-              <div class="toggle-track"></div>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-info">
-              <div class="setting-label">Auto Refresh Status</div>
-              <div class="setting-desc">Poll GitHub API setiap 8 detik</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="opt-refresh" checked>
-              <div class="toggle-track"></div>
-            </label>
-          </div>
-        </div>
-
-        <div class="card-title" style="margin-top:20px">Cordova Settings</div>
-        <div class="card">
-          <div class="form-group">
-            <label>Cordova Android Version</label>
-            <select id="cordova-ver">
-              <option value="13.0.0">android@13.0.0 (Latest)</option>
-              <option value="12.0.1" selected>android@12.0.1 (Stable ✓)</option>
-              <option value="11.0.0">android@11.0.0</option>
-              <option value="10.1.2">android@10.1.2</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label>Java Version</label>
-            <select id="java-ver">
-              <option value="17" selected>Java 17 LTS (Recommended)</option>
-              <option value="11">Java 11</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card-title">GitHub Token Guide</div>
-        <div class="card" style="background:linear-gradient(135deg,rgba(121,192,255,0.04),transparent)">
-          <div style="font-size:0.8rem;color:var(--text-1);line-height:1.7">
-            <p style="margin-bottom:10px">Untuk menggunakan APK Builder Pro, Anda memerlukan GitHub Personal Access Token dengan permission berikut:</p>
-            <div class="info-row"><span class="info-key">repo</span><span class="info-val" style="color:var(--green)">✓ Full control</span></div>
-            <div class="info-row"><span class="info-key">workflow</span><span class="info-val" style="color:var(--green)">✓ Required</span></div>
-            <div style="margin-top:12px;font-size:0.75rem;font-family:var(--font-mono);color:var(--text-2)">
-              Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token
-            </div>
-          </div>
-          <div class="divider"></div>
-          <a href="https://github.com/settings/tokens" target="_blank" class="btn btn-outline btn-sm btn-full">
-            🔑 Buat Token di GitHub
-          </a>
-        </div>
-
-        <div class="card-title" style="margin-top:20px">Reset & Clear</div>
-        <div class="card">
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <button class="btn btn-secondary btn-full" onclick="clearSavedConfig()">🗑 Hapus Konfigurasi Tersimpan</button>
-            <button class="btn btn-danger btn-full" onclick="resetAll()">⚠ Reset Semua Data</button>
-          </div>
-          <div style="font-size:0.72rem;color:var(--text-2);margin-top:10px;font-family:var(--font-mono)">
-            Data tersimpan secara lokal di browser Anda. Tidak ada data yang dikirim ke server selain GitHub API.
-          </div>
-        </div>
-
-        <div class="card-title" style="margin-top:20px">About</div>
-        <div class="card">
-          <div class="info-row"><span class="info-key">version</span><span class="info-val">2.0.0</span></div>
-          <div class="info-row"><span class="info-key">engine</span><span class="info-val">Cordova + Gradle</span></div>
-          <div class="info-row"><span class="info-key">platform</span><span class="info-val">GitHub Actions</span></div>
-          <div class="info-row"><span class="info-key">output</span><span class="info-val">*-Signed.apk</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- ======================== JAVASCRIPT ======================== -->
-<script>
-'use strict';
+<div class="card">
+  <div class="balance">Saldo: Rp <span id="balance">0</span></div>
+</div>
 
-// ─── STATE ──────────────────────────────────────────────────────
-const state = {
-  building: false,
-  runId: null,
-  pollTimer: null,
-  stepIndex: 0,
-  iconBase64: null,
-  htmlContent: '',
+<div class="card">
+  <input id="desc" placeholder="Deskripsi">
+  <input id="amount" type="number" placeholder="Jumlah">
+  <select id="type">
+    <option value="income">Pemasukan</option>
+    <option value="expense">Pengeluaran</option>
+  </select>
+  <button onclick="addData()">Tambah</button>
+</div>
+
+<div class="card">
+  <div class="row">
+    <button onclick="exportData()">Export</button>
+    <button onclick="clearData()">Reset</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Grafik</h3>
+  <canvas id="chart" height="120"></canvas>
+</div>
+
+<div class="card">
+  <h3>Riwayat</h3>
+  <div id="list"></div>
+</div>
+
+<script>
+let db = JSON.parse(localStorage.getItem("financePRO")) || {
+  accounts: {
+    "Utama": []
+  }
 };
 
-// ─── TABS ────────────────────────────────────────────────────────
-function switchTab(name) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  document.querySelector('[data-tab="' + name + '"]').classList.add('active');
-  if (name === 'preview') updatePreview();
-  if (name === 'build') updateWorkflowPreview();
+let current = "Utama";
+
+function save(){
+  localStorage.setItem("financePRO", JSON.stringify(db));
 }
 
-// ─── TOAST SYSTEM ────────────────────────────────────────────────
-function toast(title, msg, type = 'info', duration = 4000) {
-  const icons = { success: '✅', error: '❌', info: 'ℹ️', warn: '⚠️' };
-  const container = document.getElementById('toast-container');
-  const el = document.createElement('div');
-  el.className = `toast toast-${type}`;
-  el.innerHTML = `
-    <div class="toast-icon">${icons[type]}</div>
-    <div class="toast-body">
-      <div class="toast-title">${title}</div>
-      ${msg ? `<div class="toast-msg">${msg}</div>` : ''}
-    </div>
-    <button onclick="dismissToast(this.parentElement)" style="background:none;border:none;color:var(--text-2);cursor:pointer;font-size:1rem;padding:0 0 0 8px;align-self:flex-start">×</button>
-  `;
-  container.appendChild(el);
-  if (duration > 0) setTimeout(() => dismissToast(el), duration);
-  return el;
-}
+function loadAccounts(){
+  let sel = document.getElementById("account");
+  sel.innerHTML = "";
 
-function dismissToast(el) {
-  if (!el || el.classList.contains('removing')) return;
-  el.classList.add('removing');
-  setTimeout(() => el.remove(), 300);
-}
+  Object.keys(db.accounts).forEach(acc=>{
+    sel.innerHTML += `<option ${acc===current?"selected":""}>${acc}</option>`;
+  });
 
-// ─── TERMINAL LOGGER ────────────────────────────────────────────
-function log(text, type = '') {
-  const terminal = document.getElementById('terminal');
-  const now = new Date();
-  const t = [now.getHours(), now.getMinutes(), now.getSeconds()]
-    .map(n => String(n).padStart(2, '0')).join(':');
-  const prefixes = { info: '>', success: '✓', warn: '!', error: '✗', accent: '$', dim: '#' };
-  const prefix = prefixes[type] || '·';
-  const line = document.createElement('div');
-  line.className = `log-line${type ? ' log-' + type : ''}`;
-  line.innerHTML = `
-    <span class="log-time">${t}</span>
-    <span class="log-prefix" style="opacity:0.6">${prefix}</span>
-    <span class="log-text">${escHtml(text)}</span>`;
-  terminal.appendChild(line);
-  terminal.scrollTop = terminal.scrollHeight;
-}
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function clearTerminal() {
-  document.getElementById('terminal').innerHTML = '';
-  log('Terminal cleared.', 'dim');
-}
-
-// ─── STEP INDICATOR ──────────────────────────────────────────────
-function setStep(n) {
-  for (let i = 0; i <= 4; i++) {
-    const s = document.getElementById('step-' + i);
-    if (i < n) { s.className = 'step done'; }
-    else if (i === n) { s.className = 'step active'; }
-    else { s.className = 'step'; }
-    if (i < 4) {
-      const c = document.getElementById('conn-' + i);
-      c.style.background = i < n ? 'var(--green)' : 'var(--border)';
-    }
-  }
-}
-
-function resetSteps() {
-  for (let i = 0; i <= 4; i++) {
-    document.getElementById('step-' + i).className = 'step';
-    if (i < 4) document.getElementById('conn-' + i).style.background = 'var(--border)';
-  }
-}
-
-// ─── BUILD STATUS BADGE ──────────────────────────────────────────
-function setBadge(status) {
-  const labels = {
-    idle: ['IDLE', 'status-idle'],
-    queued: ['QUEUED', 'status-queued'],
-    running: ['RUNNING', 'status-running'],
-    success: ['SUCCESS', 'status-success'],
-    failed: ['FAILED', 'status-failed'],
+  sel.onchange = e=>{
+    current = e.target.value;
+    render();
   };
-  const [label, cls] = labels[status] || labels.idle;
-  const b = document.getElementById('build-status-badge');
-  b.className = 'status-badge ' + cls;
-  b.innerHTML = `<span class="${status === 'running' ? 'pulse' : ''}">●</span> ${label}`;
-  const g = document.getElementById('global-status');
-  g.className = 'status-badge ' + cls;
-  g.innerHTML = `<span class="${status === 'running' ? 'pulse' : ''}">●</span> ${label}`;
-  // Terminal dot color
-  const colors = { idle:'var(--text-2)', queued:'var(--yellow)', running:'var(--accent)', success:'var(--green)', failed:'var(--red)' };
-  document.getElementById('term-dot').style.background = colors[status] || colors.idle;
 }
 
-// ─── VALIDATE INPUTS ────────────────────────────────────────────
-function validateAll() {
-  const user = document.getElementById('gh-user').value.trim();
-  const token = document.getElementById('gh-token').value.trim();
-  const repo = document.getElementById('gh-repo').value.trim();
-  const appName = document.getElementById('app-name').value.trim();
-  const pkg = document.getElementById('pkg-name').value.trim();
-  const html = document.getElementById('html-editor').value.trim();
-
-  if (!user) { toast('Validasi Gagal', 'GitHub Username wajib diisi.', 'error'); return false; }
-  if (!token || !token.startsWith('ghp_')) { toast('Validasi Gagal', 'Token harus diawali ghp_...', 'error'); return false; }
-  if (!repo) { toast('Validasi Gagal', 'Nama repository wajib diisi.', 'error'); return false; }
-  if (!appName) { toast('Validasi Gagal', 'Nama aplikasi wajib diisi.', 'error'); return false; }
-  if (!/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){2,}$/.test(pkg)) {
-    toast('Validasi Gagal', 'Package name tidak valid. Contoh: com.company.app', 'error');
-    return false;
-  }
-  if (!html) { toast('Validasi Gagal', 'Kode HTML tidak boleh kosong.', 'error'); return false; }
-  return { user, token, repo, appName, pkg, html };
+function addAccount(){
+  let name = prompt("Nama akun?");
+  if(!name) return;
+  db.accounts[name] = [];
+  current = name;
+  save();
+  loadAccounts();
+  render();
 }
 
-// ─── GITHUB API HELPERS ─────────────────────────────────────────
-async function ghApi(method, path, body, token) {
-  const res = await fetch('https://api.github.com' + path, {
-    method,
-    headers: {
-      Authorization: 'token ' + token,
-      'Content-Type': 'application/json',
-      Accept: 'application/vnd.github.v3+json',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(`GitHub API ${res.status}: ${err.message || res.statusText}`);
-  }
-  return res.status === 204 ? null : res.json();
-}
-
-async function ensureRepo(user, token, repo) {
-  try {
-    await ghApi('GET', `/repos/${user}/${repo}`, null, token);
-    log(`Repository "${repo}" ditemukan.`, 'success');
-    return true;
-  } catch {
-    log(`Repository "${repo}" tidak ditemukan, membuat baru...`, 'warn');
-    await ghApi('POST', '/user/repos', { name: repo, private: false, auto_init: true, description: 'APK Builder Pro - Generated Repository' }, token);
-    log(`Repository "${repo}" berhasil dibuat.`, 'success');
-    await delay(2000); // wait for init commit
-    return true;
-  }
-}
-
-async function upsertFile(user, token, repo, path, content, message) {
-  const b64 = btoa(unescape(encodeURIComponent(content)));
-  let sha;
-  try {
-    const existing = await ghApi('GET', `/repos/${user}/${repo}/contents/${path}`, null, token);
-    sha = existing.sha;
-  } catch { /* file doesn't exist */ }
-  await ghApi('PUT', `/repos/${user}/${repo}/contents/${path}`, {
-    message,
-    content: b64,
-    ...(sha ? { sha } : {}),
-  }, token);
-}
-
-// ─── WORKFLOW GENERATOR ─────────────────────────────────────────
-function generateWorkflow(cfg) {
-  const { appName, pkg, version, versionCode, targetSdk, orientation, cordovaVer, javaVer, sign, zipalign } = cfg;
-
-  // Safe names for artifact (no spaces)
-  const safeAppName = appName.replace(/\s+/g, '_');
-
-  return `name: Build HTML to APK
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Java ${javaVer}
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: ${javaVer}
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Cordova
-        run: npm install -g cordova
-
-      - name: Create Cordova project
-        run: |
-          cordova create apk_project ${pkg} "${appName}"
-
-      - name: Copy HTML source
-        run: |
-          cp www/index.html apk_project/www/index.html
-
-      - name: Write config.xml
-        run: |
-          cat > apk_project/config.xml << 'CONFIGEOF'
-          <?xml version='1.0' encoding='utf-8'?>
-          <widget id="${pkg}" version="${version}" versionCode="${versionCode}" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-            <name>${appName}</name>
-            <description>Built with APK Builder Pro</description>
-            <author>APK Builder Pro</author>
-            <content src="index.html" />
-            <access origin="*" />
-            <allow-intent href="http://*/*" />
-            <allow-intent href="https://*/*" />
-            <platform name="android">
-              <preference name="android-minSdkVersion" value="22" />
-              <preference name="android-targetSdkVersion" value="${targetSdk}" />
-              <preference name="Orientation" value="${orientation}" />
-            </platform>
-          </widget>
-          CONFIGEOF
-
-      - name: Add Android platform
-        working-directory: apk_project
-        run: cordova platform add android@${cordovaVer}
-
-      - name: Build APK
-        working-directory: apk_project
-        run: cordova build android
-        env:
-          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g"
-
-      - name: Verify APK output
-        run: |
-          echo "=== APK FILES ==="
-          find apk_project/platforms/android/app/build/outputs/apk -name "*.apk" -ls
-${sign ? `
-      - name: Generate Keystore
-        run: |
-          keytool -genkey -v \
-            -keystore release.keystore \
-            -alias release \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -storepass apkbuilder \
-            -keypass apkbuilder \
-            -dname "CN=APKBuilder, OU=Dev, O=APKBuilderPro, L=ID, S=ID, C=ID"
-
-      - name: Sign APK
-        run: |
-          UNSIGNED=$(find apk_project/platforms/android/app/build/outputs/apk/debug -name "*.apk" | head -1)
-          echo "Signing: $UNSIGNED"
-${zipalign ? `          ALIGNED="${safeAppName}-${version}-aligned.apk"
-          zipalign -v 4 "$UNSIGNED" "$ALIGNED"
-          UNSIGNED="$ALIGNED"
-` : ''}          apksigner sign \
-            --ks release.keystore \
-            --ks-key-alias release \
-            --ks-pass pass:apkbuilder \
-            --key-pass pass:apkbuilder \
-            --out "${safeAppName}-${version}-Signed.apk" \
-            "$UNSIGNED"
-          echo "APK_FILE=${safeAppName}-${version}-Signed.apk" >> $GITHUB_ENV
-` : `
-      - name: Locate APK
-        run: |
-          APK=$(find apk_project/platforms/android/app/build/outputs/apk/debug -name "*.apk" | head -1)
-          cp "$APK" "${safeAppName}-${version}.apk"
-          echo "APK_FILE=${safeAppName}-${version}.apk" >> $GITHUB_ENV
-`}
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${safeAppName}-v${version}-APK
-          path: \${{ env.APK_FILE }}
-          retention-days: 30
-`;
-}
-
-// ─── MAIN BUILD FLOW ────────────────────────────────────────────
-async function startBuild() {
-  if (state.building) return;
-
-  const cfg = validateAll();
-  if (!cfg) return;
-
-  const { user, token, repo, appName, pkg, html } = cfg;
-  const version = document.getElementById('app-version').value.trim() || '1.0.0';
-  const versionCode = document.getElementById('version-code').value || '1';
-  const targetSdk = document.getElementById('target-sdk').value;
-  const orientation = document.getElementById('orientation').value;
-  const cordovaVer = document.getElementById('cordova-ver').value;
-  const javaVer = document.getElementById('java-ver').value;
-  const sign = document.getElementById('opt-sign').checked;
-  const zipalign = document.getElementById('opt-zip').checked;
-
-  const fullCfg = { appName, pkg, version, versionCode, targetSdk, orientation, cordovaVer, javaVer, sign, zipalign };
-
-  state.building = true;
-  document.getElementById('btn-build').disabled = true;
-  document.getElementById('btn-cancel').style.display = 'inline-flex';
-  document.getElementById('progress-wrap').style.display = 'block';
-  document.getElementById('artifact-section').style.display = 'none';
-  resetSteps();
-  setBadge('queued');
-  clearTerminal();
-  setProgress(5);
-
-  log('═══════════════════════════════════', 'dim');
-  log(`APK Builder Pro — Build dimulai`, 'accent');
-  log(`App: ${appName} (${pkg}) v${version}`, 'info');
-  log(`Target SDK: ${targetSdk} | Cordova: ${cordovaVer} | Java: ${javaVer}`, 'info');
-  log('═══════════════════════════════════', 'dim');
-
-  try {
-    // STEP 0: Validate
-    setStep(0);
-    log('Validasi konfigurasi...', 'info');
-    await delay(400);
-    log('Konfigurasi valid ✓', 'success');
-    setStep(1);
-    setProgress(15);
-
-    // STEP 1: Ensure repo
-    log(`Menghubungi GitHub API...`, 'info');
-    await ensureRepo(user, token, repo);
-    setProgress(20);
-
-    // STEP 1a: Push workflow FIRST (so GitHub registers it before we trigger)
-    const workflow = generateWorkflow(fullCfg);
-    log('Mendorong .github/workflows/build.yml...', 'info');
-    await upsertFile(user, token, repo, '.github/workflows/build.yml', workflow, `ci: APK build workflow by APK Builder Pro`);
-    log('.github/workflows/build.yml berhasil dipush ✓', 'success');
-    setProgress(30);
-
-    // Wait for GitHub to index the workflow file
-    log('Menunggu GitHub mengindeks workflow (8 detik)...', 'dim');
-    await delay(8000);
-
-    // STEP 1b: Catat waktu sekarang sebelum memicu run
-    const triggerTime = new Date().toISOString();
-    log(`Trigger timestamp: ${triggerTime}`, 'dim');
-
-    // STEP 1c: Push HTML — ini yang memicu push trigger di workflow
-    log('Mendorong www/index.html ke repository...', 'info');
-    await upsertFile(user, token, repo, 'www/index.html', html, `feat: update HTML - trigger build [${new Date().toLocaleTimeString()}]`);
-    log('www/index.html berhasil dipush ✓', 'success');
-    setProgress(45);
-    setStep(2);
-
-    // STEP 2: Coba workflow_dispatch sebagai fallback trigger
-    log('Mencoba workflow_dispatch sebagai trigger tambahan...', 'info');
-    await delay(3000);
-    try {
-      await ghApi('POST', `/repos/${user}/${repo}/actions/workflows/build.yml/dispatches`,
-        { ref: 'main' }, token);
-      log('Workflow dispatch berhasil ✓', 'success');
-    } catch (e) {
-      // Normal jika workflow sudah dipicu oleh push
-      log(`Dispatch info: ${e.message.includes('404') ? 'Push trigger aktif, dispatch tidak diperlukan.' : e.message}`, 'dim');
-    }
-
-    // Tunggu lagi supaya runner sempat mengambil job
-    log('Menunggu GitHub Actions runner siap (10 detik)...', 'dim');
-    await delay(10000);
-
-    // Get latest run — filter by created_at > triggerTime
-    log('Mencari workflow run yang baru dibuat...', 'info');
-    let runId = null;
-    const triggerMs = new Date(triggerTime).getTime();
-
-    for (let attempt = 0; attempt < 15; attempt++) {
-      if (!state.building) break;
-      try {
-        const runs = await ghApi('GET', `/repos/${user}/${repo}/actions/runs?per_page=10&branch=main`, null, token);
-        if (runs && runs.workflow_runs && runs.workflow_runs.length > 0) {
-          // Ambil run yang dibuat setelah triggerTime
-          const fresh = runs.workflow_runs.find(r => {
-            const created = new Date(r.created_at).getTime();
-            return created >= (triggerMs - 30000); // toleransi 30 detik ke belakang
-          });
-          if (fresh) {
-            runId = fresh.id;
-            log(`Run ditemukan: #${runId} (${fresh.status}) — dibuat ${fresh.created_at}`, 'success');
-            break;
-          } else {
-            log(`Attempt ${attempt + 1}/15: Belum ada run baru, menunggu 5 detik...`, 'dim');
-          }
-        }
-      } catch (e) {
-        log(`Poll error: ${e.message}`, 'warn');
-      }
-      await delay(5000);
-    }
-
-    if (!runId) {
-      // Fallback: ambil run terbaru meskipun waktunya tidak cocok persis
-      log('Fallback: mengambil run terbaru dari daftar...', 'warn');
-      try {
-        const runs = await ghApi('GET', `/repos/${user}/${repo}/actions/runs?per_page=3`, null, token);
-        if (runs && runs.workflow_runs && runs.workflow_runs.length > 0) {
-          runId = runs.workflow_runs[0].id;
-          log(`Menggunakan run terbaru: #${runId}`, 'warn');
-        }
-      } catch {}
-    }
-
-    if (!runId) {
-      log('Workflow run tidak terdeteksi setelah 15 percobaan.', 'error');
-      log(`Cek manual: https://github.com/${user}/${repo}/actions`, 'accent');
-      toast('Cek GitHub Actions', `Buka github.com/${user}/${repo}/actions`, 'warn', 0);
-      finishBuild(null, user, repo);
-      return;
-    }
-
-    state.runId = runId;
-    document.getElementById('term-run-id').textContent = `Run #${runId}`;
-    log(`Workflow Run ID: ${runId}`, 'success');
-    setStep(3);
-    setProgress(60);
-    setBadge('running');
-
-    // STEP 3: Poll status
-    if (document.getElementById('opt-refresh').checked) {
-      await pollBuildStatus(user, token, repo, runId);
-    } else {
-      log('Auto-refresh dimatikan. Cek status manual di GitHub.', 'warn');
-      toast('Build Berjalan', `Run #${runId} sedang berjalan di GitHub.`, 'info');
-      finishBuild(null, user, repo, runId);
-    }
-
-  } catch (err) {
-    log(`ERROR: ${err.message}`, 'error');
-    toast('Build Gagal', err.message, 'error');
-    setBadge('failed');
-    finishBuild(false, user, repo);
-  }
-}
-
-// ─── POLLING ────────────────────────────────────────────────────
-async function pollBuildStatus(user, token, repo, runId) {
-  log('Memantau status build secara real-time...', 'info');
-
-  return new Promise((resolve) => {
-    let retries = 0;
-    const maxRetries = 75; // 75 * 8s = 10 menit
-    let lastJobStep = '';
-
-    const poll = async () => {
-      if (!state.building) { resolve(); return; }
-      retries++;
-
-      try {
-        const tk = document.getElementById('gh-token').value.trim();
-        const run = await ghApi('GET', `/repos/${user}/${repo}/actions/runs/${runId}`, null, tk);
-
-        const status = run.status;
-        const conclusion = run.conclusion;
-        const pct = status === 'completed' ? 100 : Math.min(60 + retries * 0.8, 95);
-        setProgress(pct);
-
-        // Fetch job steps untuk log lebih detail
-        try {
-          const jobs = await ghApi('GET', `/repos/${user}/${repo}/actions/runs/${runId}/jobs`, null, tk);
-          if (jobs && jobs.jobs && jobs.jobs.length > 0) {
-            const job = jobs.jobs[0];
-            const runningStep = job.steps && job.steps.find(s => s.status === 'in_progress');
-            const stepName = runningStep ? runningStep.name : (job.status === 'queued' ? 'Waiting for runner...' : '');
-            if (stepName && stepName !== lastJobStep) {
-              lastJobStep = stepName;
-              log(`▶ Step: ${stepName}`, 'accent');
-            }
-          }
-        } catch {} // non-fatal
-
-        if (status === 'in_progress') {
-          log(`🔄 Running... [${retries}/${maxRetries}] — ${new Date().toLocaleTimeString()}`, 'info');
-        } else if (status === 'queued') {
-          log(`⏳ Antrian... menunggu GitHub runner [${retries}/${maxRetries}]`, 'warn');
-        }
-
-        if (status === 'completed') {
-          const appName = document.getElementById('app-name').value;
-          const ver = document.getElementById('app-version').value;
-          if (conclusion === 'success') {
-            log('', 'dim');
-            log('╔══════════════════════════════════╗', 'success');
-            log('║  BUILD BERHASIL! APK siap! ✓     ║', 'success');
-            log('╚══════════════════════════════════╝', 'success');
-            toast('Build Selesai! 🎉', `APK berhasil dibuat. Unduh dari GitHub Actions.`, 'success', 0);
-            setBadge('success');
-            setStep(4);
-            setProgress(100);
-            showArtifact(user, repo, runId, appName, ver);
-          } else {
-            log(`✗ Build GAGAL — conclusion: ${conclusion}`, 'error');
-            log(`  Lihat log: https://github.com/${user}/${repo}/actions/runs/${runId}`, 'accent');
-            toast('Build Gagal', `Conclusion: ${conclusion}. Klik link di terminal untuk melihat log.`, 'error', 0);
-            setBadge('failed');
-          }
-          finishBuild(conclusion === 'success', user, repo, runId);
-          resolve();
-          return;
-        }
-
-        if (retries >= maxRetries) {
-          log('⚠ Timeout: melebihi 10 menit. Build mungkin masih berjalan.', 'warn');
-          log(`  Pantau manual: https://github.com/${user}/${repo}/actions/runs/${runId}`, 'accent');
-          toast('Timeout', 'Build masih berjalan. Pantau di GitHub Actions.', 'warn', 0);
-          finishBuild(null, user, repo, runId);
-          resolve();
-          return;
-        }
-      } catch (e) {
-        log(`Poll error (${retries}): ${e.message}`, 'warn');
-      }
-
-      state.pollTimer = setTimeout(poll, 8000);
-    };
-
-    state.pollTimer = setTimeout(poll, 5000);
-  });
-}
-
-function showArtifact(user, repo, runId, appName, version) {
-  document.getElementById('artifact-section').style.display = 'block';
-  document.getElementById('artifact-name').textContent = `${appName}-${version}-Signed.apk`;
-  document.getElementById('artifact-meta').textContent = `GitHub Actions Run #${runId} • Artifact tersedia 30 hari`;
-  const url = `https://github.com/${user}/${repo}/actions/runs/${runId}`;
-  document.getElementById('artifact-link').href = url;
-}
-
-function finishBuild(success, user, repo, runId) {
-  state.building = false;
-  if (state.pollTimer) { clearTimeout(state.pollTimer); state.pollTimer = null; }
-  document.getElementById('btn-build').disabled = false;
-  document.getElementById('btn-cancel').style.display = 'none';
-
-  if (runId) {
-    log(`GitHub Actions: https://github.com/${user}/${repo}/actions/runs/${runId}`, 'accent');
-  }
-  log('─────────────────────────────────', 'dim');
-
-  if (success === false) {
-    setBadge('failed');
-    setProgress(0);
-    document.getElementById('progress-wrap').style.display = 'none';
-  }
-}
-
-function cancelBuild() {
-  if (!state.building) return;
-  state.building = false;
-  if (state.pollTimer) clearTimeout(state.pollTimer);
-  log('Build dibatalkan oleh user.', 'warn');
-  toast('Dibatalkan', 'Proses build dihentikan.', 'warn');
-  setBadge('idle');
-  document.getElementById('btn-build').disabled = false;
-  document.getElementById('btn-cancel').style.display = 'none';
-  document.getElementById('progress-wrap').style.display = 'none';
-  resetSteps();
-}
-
-function setProgress(pct) {
-  document.getElementById('progress-bar').style.width = pct + '%';
-}
-
-// ─── CHECK REPO ──────────────────────────────────────────────────
-async function checkRepo() {
-  const user = document.getElementById('gh-user').value.trim();
-  const token = document.getElementById('gh-token').value.trim();
-  const repo = document.getElementById('gh-repo').value.trim();
-  const statusEl = document.getElementById('repo-status');
-
-  if (!user || !token || !repo) {
-    toast('Info', 'Isi Username, Token, dan Repo terlebih dahulu.', 'warn');
+function deleteAccount(){
+  if(Object.keys(db.accounts).length===1){
+    alert("Minimal 1 akun!");
     return;
   }
-
-  const btn = document.getElementById('btn-check-repo');
-  btn.disabled = true;
-  btn.textContent = '...';
-  statusEl.textContent = 'Mengecek...';
-  statusEl.style.color = 'var(--text-2)';
-
-  try {
-    const data = await ghApi('GET', `/repos/${user}/${repo}`, null, token);
-    statusEl.innerHTML = `✓ Repository ditemukan — <span style="color:var(--accent)">${data.full_name}</span> (${data.visibility})`;
-    statusEl.style.color = 'var(--green)';
-    toast('Repo Ditemukan', data.full_name, 'success');
-  } catch (e) {
-    statusEl.textContent = '✗ Tidak ditemukan — akan dibuat otomatis saat build';
-    statusEl.style.color = 'var(--yellow)';
-    toast('Repo Belum Ada', 'Akan dibuat otomatis.', 'warn');
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Check';
+  delete db.accounts[current];
+  current = Object.keys(db.accounts)[0];
+  save();
+  loadAccounts();
+  render();
 }
 
-// ─── PREVIEW ────────────────────────────────────────────────────
-function updatePreview() {
-  const html = document.getElementById('html-editor').value;
-  const screen = document.getElementById('phone-screen-inner');
+function addData(){
+  let desc = document.getElementById("desc").value;
+  let amount = parseInt(document.getElementById("amount").value);
+  let type = document.getElementById("type").value;
 
-  if (!html.trim()) {
-    screen.innerHTML = `<div class="preview-placeholder">
-      <div class="preview-placeholder-icon">📱</div>
-      <div>Belum ada HTML</div></div>`;
-    return;
-  }
+  if(!desc || !amount) return alert("Isi data!");
 
-  const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'width:100%;height:100%;border:none;display:block';
-  iframe.sandbox = 'allow-scripts allow-same-origin allow-forms';
-  screen.innerHTML = '';
-  screen.appendChild(iframe);
-
-  const doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open(); doc.write(html); doc.close();
-
-  // Update info
-  const name = document.getElementById('app-name').value;
-  const pkg = document.getElementById('pkg-name').value;
-  const ver = document.getElementById('app-version').value;
-  const sdk = document.getElementById('target-sdk').value;
-  const ori = document.getElementById('orientation').value;
-  const bytes = new Blob([html]).size;
-  const kb = (bytes / 1024).toFixed(1);
-
-  document.getElementById('pi-name').textContent = name || '—';
-  document.getElementById('pi-pkg').textContent = pkg || '—';
-  document.getElementById('pi-ver').textContent = ver || '—';
-  document.getElementById('pi-sdk').textContent = 'API ' + sdk;
-  document.getElementById('pi-ori').textContent = ori;
-  document.getElementById('pi-size').textContent = kb + ' KB';
-
-  const lines = html.split('\n').length;
-  document.getElementById('st-lines').textContent = lines.toLocaleString();
-  document.getElementById('st-chars').textContent = bytes.toLocaleString();
-  document.getElementById('st-js').textContent = /<script/i.test(html) ? 'yes' : 'no';
-  document.getElementById('st-css').textContent = /<style/i.test(html) ? 'yes' : 'no';
-}
-
-// ─── WORKFLOW PREVIEW ────────────────────────────────────────────
-function updateWorkflowPreview() {
-  const appName = document.getElementById('app-name').value || 'MyApp';
-  const pkg = document.getElementById('pkg-name').value || 'com.example.app';
-  const version = document.getElementById('app-version').value || '1.0.0';
-  const versionCode = document.getElementById('version-code').value || '1';
-  const targetSdk = document.getElementById('target-sdk').value || '33';
-  const orientation = document.getElementById('orientation').value || 'portrait';
-  const cordovaVer = document.getElementById('cordova-ver').value || '12.0.1';
-  const javaVer = document.getElementById('java-ver').value || '17';
-  const sign = document.getElementById('opt-sign').checked;
-  const zipalign = document.getElementById('opt-zip').checked;
-
-  const wf = generateWorkflow({ appName, pkg, version, versionCode, targetSdk, orientation, cordovaVer, javaVer, sign, zipalign });
-  const container = document.getElementById('workflow-preview');
-  const lines = wf.split('\n').map(l => {
-    let cls = 'color:var(--text-1)';
-    if (l.trim().startsWith('#')) cls = 'color:var(--text-2)';
-    else if (l.trim().startsWith('name:') || l.trim().startsWith('- name:')) cls = 'color:var(--accent-2)';
-    else if (l.trim().startsWith('run:')) cls = 'color:var(--accent)';
-    else if (l.trim().startsWith('uses:')) cls = 'color:var(--accent-4)';
-    return `<div style="${cls}">${escHtml(l)}</div>`;
-  }).join('');
-  container.innerHTML = lines;
-}
-
-// ─── HTML FILE UPLOAD ────────────────────────────────────────────
-function loadHTMLFile(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    document.getElementById('html-editor').value = ev.target.result;
-    toast('File Dimuat', file.name + ' berhasil dibaca.', 'success');
-  };
-  reader.readAsText(file);
-}
-
-function loadIcon(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const img = document.createElement('img');
-    img.src = ev.target.result;
-    const box = document.getElementById('icon-preview-box');
-    box.innerHTML = '';
-    box.appendChild(img);
-    state.iconBase64 = ev.target.result;
-    toast('Icon Dimuat', file.name, 'success');
-  };
-  reader.readAsDataURL(file);
-}
-
-// ─── SAMPLE HTML ────────────────────────────────────────────────
-function loadSampleHTML() {
-  const sample = `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My App</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-    }
-    .card {
-      text-align: center;
-      padding: 40px 30px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
-      max-width: 320px;
-      width: 90%;
-    }
-    .icon { font-size: 4rem; margin-bottom: 16px; }
-    h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
-    p { opacity: 0.8; margin-bottom: 24px; line-height: 1.6; }
-    button {
-      background: white;
-      color: #764ba2;
-      border: none;
-      border-radius: 12px;
-      padding: 12px 28px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    #counter { font-size: 2.5rem; font-weight: 800; margin: 20px 0; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div class="icon">🚀</div>
-    <h1>Hello World!</h1>
-    <p>Aplikasi Android pertama saya dibuat dengan APK Builder Pro</p>
-    <div id="counter">0</div>
-    <button onclick="increment()">Tap Me!</button>
-  </div>
-  <script>
-    let n = 0;
-    function increment() {
-      n++;
-      document.getElementById('counter').textContent = n;
-    }
-  <\/script>
-</body>
-</html>`;
-  document.getElementById('html-editor').value = sample;
-  toast('Sample Dimuat', 'Contoh HTML telah dimasukkan ke editor.', 'info');
-}
-
-// ─── COPY HELPERS ────────────────────────────────────────────────
-function copyCode() {
-  const val = document.getElementById('html-editor').value;
-  if (!val) { toast('Kosong', 'Tidak ada kode untuk disalin.', 'warn'); return; }
-  navigator.clipboard.writeText(val).then(() => toast('Disalin!', 'Kode HTML berhasil disalin.', 'success'));
-}
-
-function copyWorkflow() {
-  const appName = document.getElementById('app-name').value || 'MyApp';
-  const pkg = document.getElementById('pkg-name').value || 'com.example.app';
-  const version = document.getElementById('app-version').value || '1.0.0';
-  const versionCode = document.getElementById('version-code').value || '1';
-  const targetSdk = document.getElementById('target-sdk').value || '33';
-  const orientation = document.getElementById('orientation').value || 'portrait';
-  const cordovaVer = document.getElementById('cordova-ver').value || '12.0.1';
-  const javaVer = document.getElementById('java-ver').value || '17';
-  const sign = document.getElementById('opt-sign').checked;
-  const zipalign = document.getElementById('opt-zip').checked;
-  const wf = generateWorkflow({ appName, pkg, version, versionCode, targetSdk, orientation, cordovaVer, javaVer, sign, zipalign });
-  navigator.clipboard.writeText(wf).then(() => toast('Disalin!', 'Workflow YAML berhasil disalin.', 'success'));
-}
-
-// ─── SETTINGS ────────────────────────────────────────────────────
-function clearSavedConfig() {
-  localStorage.removeItem('apkbuilder_config');
-  toast('Dihapus', 'Konfigurasi tersimpan telah dihapus.', 'info');
-}
-
-function resetAll() {
-  if (!confirm('Reset semua data? Aksi ini tidak dapat dibatalkan.')) return;
-  document.getElementById('html-editor').value = '';
-  document.getElementById('gh-user').value = '';
-  document.getElementById('gh-token').value = '';
-  document.getElementById('gh-repo').value = '';
-  document.getElementById('app-name').value = 'MyApp';
-  document.getElementById('pkg-name').value = 'com.mycompany.myapp';
-  document.getElementById('app-version').value = '1.0.0';
-  document.getElementById('version-code').value = '1';
-  document.getElementById('icon-preview-box').innerHTML = '🤖';
-  localStorage.clear();
-  clearTerminal();
-  resetSteps();
-  setBadge('idle');
-  toast('Reset', 'Semua data telah direset.', 'success');
-}
-
-// ─── SAVE/LOAD CONFIG ───────────────────────────────────────────
-function saveConfig() {
-  const cfg = {
-    user: document.getElementById('gh-user').value,
-    repo: document.getElementById('gh-repo').value,
-    appName: document.getElementById('app-name').value,
-    pkg: document.getElementById('pkg-name').value,
-    version: document.getElementById('app-version').value,
-    versionCode: document.getElementById('version-code').value,
-  };
-  localStorage.setItem('apkbuilder_config', JSON.stringify(cfg));
-}
-
-function loadConfig() {
-  try {
-    const cfg = JSON.parse(localStorage.getItem('apkbuilder_config') || '{}');
-    if (cfg.user) document.getElementById('gh-user').value = cfg.user;
-    if (cfg.repo) document.getElementById('gh-repo').value = cfg.repo;
-    if (cfg.appName) document.getElementById('app-name').value = cfg.appName;
-    if (cfg.pkg) document.getElementById('pkg-name').value = cfg.pkg;
-    if (cfg.version) document.getElementById('app-version').value = cfg.version;
-    if (cfg.versionCode) document.getElementById('version-code').value = cfg.versionCode;
-  } catch {}
-}
-
-// ─── UTILITY ────────────────────────────────────────────────────
-const delay = ms => new Promise(r => setTimeout(r, ms));
-
-// ─── DRAG AND DROP FOR EDITOR ────────────────────────────────────
-(function setupDnD() {
-  const editor = document.getElementById('html-editor');
-  editor.addEventListener('dragover', (e) => { e.preventDefault(); editor.style.borderColor = 'var(--accent)'; });
-  editor.addEventListener('dragleave', () => { editor.style.borderColor = ''; });
-  editor.addEventListener('drop', (e) => {
-    e.preventDefault();
-    editor.style.borderColor = '';
-    const file = e.dataTransfer.files[0];
-    if (file && (file.name.endsWith('.html') || file.name.endsWith('.htm'))) {
-      const r = new FileReader();
-      r.onload = (ev) => { editor.value = ev.target.result; toast('Dropped!', file.name, 'success'); };
-      r.readAsText(file);
-    }
+  db.accounts[current].push({
+    desc, amount, type, date: new Date().toLocaleDateString()
   });
-})();
 
-// ─── AUTO-SAVE CONFIG ────────────────────────────────────────────
-['gh-user', 'gh-repo', 'app-name', 'pkg-name', 'app-version', 'version-code'].forEach(id => {
-  document.getElementById(id).addEventListener('change', saveConfig);
-});
-
-// ─── BUILD SUMMARY UPDATE ────────────────────────────────────────
-function updateBuildSummary() {
-  const name = document.getElementById('app-name').value || '—';
-  const ver = document.getElementById('app-version').value || '—';
-  const sdk = document.getElementById('target-sdk').value || '—';
-  document.getElementById('build-summary').textContent = `${name} v${ver} — API ${sdk}`;
+  save();
+  render();
 }
-['app-name', 'app-version', 'target-sdk'].forEach(id => {
-  document.getElementById(id).addEventListener('input', updateBuildSummary);
-});
 
-// ─── INIT ────────────────────────────────────────────────────────
-loadConfig();
-updateBuildSummary();
+function clearData(){
+  if(confirm("Reset semua data akun ini?")){
+    db.accounts[current] = [];
+    save();
+    render();
+  }
+}
+
+function exportData(){
+  let dataStr = JSON.stringify(db, null, 2);
+  let blob = new Blob([dataStr], {type:"application/json"});
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "finance.json";
+  a.click();
+}
+
+function render(){
+  let list = document.getElementById("list");
+  let balance = 0;
+  list.innerHTML = "";
+
+  let data = db.accounts[current];
+
+  data.forEach((item,i)=>{
+    balance += item.type==="income" ? item.amount : -item.amount;
+
+    list.innerHTML += `
+    <div class="item" onclick="removeItem(${i})">
+      <span>${item.desc}<br><small>${item.date}</small></span>
+      <span class="${item.type}">
+        ${item.type==="income"?"+":"-"}Rp${item.amount}
+      </span>
+    </div>`;
+  });
+
+  document.getElementById("balance").innerText = balance;
+  drawChart(data);
+}
+
+function removeItem(i){
+  if(confirm("Hapus data ini?")){
+    db.accounts[current].splice(i,1);
+    save();
+    render();
+  }
+}
+
+function drawChart(data){
+  let canvas = document.getElementById("chart");
+  let ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  let income = 0, expense = 0;
+  data.forEach(d=>{
+    if(d.type==="income") income+=d.amount;
+    else expense+=d.amount;
+  });
+
+  let total = income + expense;
+  if(total===0) return;
+
+  let w = canvas.width;
+  let h = canvas.height;
+
+  let incWidth = (income/total)*w;
+  let expWidth = (expense/total)*w;
+
+  ctx.fillStyle = "#4ade80";
+  ctx.fillRect(0,0,incWidth,h);
+
+  ctx.fillStyle = "#fb7185";
+  ctx.fillRect(incWidth,0,expWidth,h);
+}
+
+loadAccounts();
+render();
 </script>
+
 </body>
 </html>
-`;
